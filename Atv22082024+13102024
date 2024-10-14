@@ -1,0 +1,78 @@
+Source Resolutions...
+
+alter table Fatura 
+add prazo_entrega date ;
+ 
+UPDATE fatura
+set prazo_entrega = '09/09/2022'
+where nrfatura = '1008';
+
+UPDATE fatura
+set prazo_entrega = TO_DATE('09/09/2022', 'DD/MM/YYYY')
+where nrfatura = '1008';
+
+ 
+CREATE or replace PROCEDURE SP_Atrasado
+       (pedido number) 
+      AS
+         Date_entrega date;
+         VNome varchar(50);
+      BEGIN
+          select Prazo_Entrega into Date_Entrega from fatura
+          where nrfatura = pedido;
+          if date_entrega < Sysdate then
+            select nome into Vnome from cliente c 
+            inner join fatura f on c.codcliente = f.codcliente
+            where nrfatura = pedido;
+            INSERT INTO tablog VALUES (date_entrega,Vnome,'Pedido em Atraso, O vendedor de avisar ao cliente');
+            end IF;
+        exception when NO_DATA_FOUND
+        then 
+        insert into tab_erro values (Sysdate, 'Número do Pedido inexistente');
+END sp_atrasado;
+ 
+EXECUTE sp_atrasado (998)
+ 
+select * from tab_erro
+
+create or replace PROCEDURE SP_ClientePremium
+    (par_cliente number)
+    as
+    quantidade number;
+    vnome varchar (100);
+    begin 
+        select count(*), nome into quantidade, vnome from fatura f
+        inner join  cliente c on  f.codcliente = c.codcliente
+        where f.codcliente = par_cliente and f.prazo_entrega  between  sysdate and add_months(sysdate, +2);
+        if quantidade > 2 
+         then
+        insert into tablog values(sysdate,'Cliente especial - enviar brinde', par_cliente ||  vnome);
+      end if ;
+END SP_ClientePremium;
+
+3___________Modelo de Trigger:
+
+CREATE [OR REPLACE] TRIGGER nome_do_trigger
+{ BEFORE | AFTER }
+{ INSERT | UPDATE | DELETE }
+ON nome_da_tabela
+[ FOR EACH ROW ]
+BEGIN
+  -- Corpo do trigger
+END;
+
+4___________Exercício 1 de Triggers:
+
+Create or Replace trigger ChecaInsert
+before insert on itens_fatura
+for each row
+begin
+    if cliente
+end ChecaInsert;
+
+5__________Exercícios Anteriores:
+É um delete usando subselects.
+EXERCICIO 3
+delete from emprestimos where idlivro = (select id from livros where livros.titulo='Calculo diferencial e integral');
+delete from autorias where idlivro = (select id from livros where livros.titulo='Calculo diferencial e integral');
+delete from livros where titulo='Calculo diferencial e integral';

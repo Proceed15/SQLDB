@@ -1,0 +1,37 @@
+Source Solutions
+
+1) Exercício com Procedure: Atualizar Saldo do Cliente
+Crie uma procedure chamada AtualizarSaldoCliente que, dado o código de um cliente (codcliente), calcule o saldo total das faturas associadas a ele. O saldo será atualizado no campo saldo da tabela cliente. O saldo será a soma dos valores das faturas do cliente, levando em consideração a quantidade de itens e o valor de cada item na tabela itens_fatura.
+ 
+Create or replace procedure AtualizarSaldoCliente(CodClie in INTEGER)
+as
+SaldoTotal Number := 0;
+begin
+    
+    Select SUM(ifa.qtde * valor) into SaldoTotal from fatura f, itens_fatura ifa
+    where  f.nrfatura = ifa.nrfatura and f.codcliente = CodClie;
+    update cliente
+    set saldo = SaldoTotal
+    where cliente.codcliente = CodClie;
+end AtualizarSaldoCliente;
+ 
+ 
+2) Exercício com Trigger: Atualizar Desconto do Produto
+Crie uma trigger que, ao inserir um novo item na tabela itens_fatura, verifique se o produto tem um desconto maior que 10% (desconto > 10). Se o desconto for maior, a trigger deve atualizar o preço do produto no item da fatura, aplicando o desconto ao valor original
+ 
+create or REPLACE TRIGGER vrdesconto
+before INSERT ON itens_fatura
+  for each row
+  DECLARE
+  vdesconto NUMBER;
+  BEGIN
+  select desconto into vdesconto from produto
+  where codproduto = :new.codproduto;
+  if( vdesconto > 0.1) then  
+  update itens_fatura
+  set valor = vdesconto;
+END IF ;
+  exception
+  when others then
+  dbms_output.put_line(' erro: ' || SQLERRM);
+END;

@@ -1,0 +1,63 @@
+/07/11/2024/
+
+Mongo DB (disponível em https://mongoplayground.net/):
+
+Script (Documento BSON):
+[
+  {
+    "nome": "Master of Puppets",
+    "dataLancamento": new Date("1986-02-02"),
+    "duracao": 3286
+  },
+  {
+    "nome": "...And Justice for All",
+    "dataLancamento": new Date("1988-06-25"),
+    "duracao": 3929
+  },
+  {
+    "nome": "Peace Sells... but Who's Buying?",
+    "duracao": 2172,
+    "estudioGravacao": "Music Grinder Studios",
+    "dataLancamento": new Date("1986-07-19")
+  },
+  {
+    "nome": "Reign in Blood",
+    "dataLancamento": new Date("1986-08-07"),
+    "artistaCapa": "Larry Carroll",
+    "duracao": 1738
+  },
+  {
+    "nome": "Among the Living",
+    "produtor": "Eddie Kramer"
+  }
+]
+
+Comando Find:
+db.collection.find({
+  "nome": "Reign in Blood"
+})
+
+Resultado para o Find:
+[
+  {
+    "_id": ObjectId("5a934e000102030405000003"),
+    "artistaCapa": "Larry Carroll",
+    "dataLancamento": ISODate("1986-08-07T00:00:00Z"),
+    "duracao": 1738,
+    "nome": "Reign in Blood"
+  }
+]
+
+Comando Find:
+db.collection.find({
+  "nome": "Among the Living"
+})
+
+Resultado para o Find:
+[
+  {
+    "_id": ObjectId("5a934e000102030405000004"),
+    "nome": "Among the Living",
+    "produtor": "Eddie Kramer"
+  }
+]
